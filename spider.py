@@ -126,6 +126,7 @@ def drawBarChart(newsWithYear: list):
             words.append(tuple[0])
             num.append(tuple[1])
         plt.bar(words, num)
+        plt.title(year)
         plt.savefig("saved_barchart/" + str(year) + ".png")
         plt.show()
         year -= 1
