@@ -118,18 +118,25 @@ def drawBarChart(newsWithYear: list):
     if not os.path.exists('saved_barchart'):
         os.makedirs("saved_barchart/")
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 设定绘图字体
+    fig, axes = plt.subplots(4, 2, sharey=True, figsize=(14, 8), dpi=80)
     year = 2022
-    for yearTuple in newsWithYear:
-        words = []
-        num = []
-        for tuple in yearTuple:
-            words.append(tuple[0])
-            num.append(tuple[1])
-        plt.bar(words, num)
-        plt.title(year)
-        plt.savefig("saved_barchart/" + str(year) + ".png")
-        plt.show()
-        year -= 1
+    k = iter(range(len(newsWithYear)))  # 创建迭代器
+    for i in range(4):
+        for j in range(2):
+            words = []
+            num = []
+            for tuple in newsWithYear[next(k)]:
+                words.append(tuple[0])
+                num.append(tuple[1])
+            axes[i, j].bar(words, num, width=0.7, alpha=0.7)  # 绘制柱状图
+            axes[i, j].set_title(str(year))  # 设定每个柱状图的标题
+            for x1, y1 in enumerate(num):  # 在柱状图上显示数量
+                axes[i, j].text(x1, y1 + 200, y1, ha='center', fontsize=8)
+            year -= 1
+
+    plt.subplots_adjust(hspace=0.8, wspace=0.1)  # 调整图片之间的间距
+    plt.savefig("saved_barchart/" + "sub" + ".png")  # 保存图片
+    plt.show()  # 显示图片
 
 
 if __name__ == "__main__":
