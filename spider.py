@@ -4,7 +4,8 @@ import requests
 from pyquery import PyQuery as pq
 import jieba
 import matplotlib.pyplot as plt
-
+import wordcloud as wc
+import imageio
 
 def getdata():
     """ 循环爬取网页新闻，并按照年份保存在 news 文件夹下 """
@@ -136,17 +137,44 @@ def drawBarChart(newsWithYear: list):
 
     plt.subplots_adjust(hspace=0.8, wspace=0.1)  # 调整图片之间的间距
     plt.savefig("saved_barchart/" + "sub" + ".png")  # 保存图片
-    plt.show()  # 显示图片
+    # plt.show()  # 显示图片
 
+
+def wordCloud():
+    """
+    生成词云
+    """
+    if not os.path.exists("wordcloud"): os.mkdir("wordcloud")
+    mk = imageio.imread("chinamap.png") # 中国地图形状的词云
+    w = wc.WordCloud(
+        width=1000,
+        height=700,
+        font_path=
+        "/home/salt/.local/share/fonts/SourceHan/SourceHanSansCN/SourceHanSansCN-Normal.otf", # 字体的绝对路径
+        mask=mk,
+        scale=15,
+        background_color='white') # 词云的背景颜色
+    print("词云生成中...")
+    for year in range(2022, 2014, -1):
+        with open("news/" + str(year) + ".txt", 'r') as f:
+            w.generate(f.read())
+            w.to_file("wordcloud/" + str(year) + ".png")
+    print("词云生成完成！")
 
 if __name__ == "__main__":
     if not os.path.exists('news/'):
         os.makedirs('news/')
+        # 抓取新闻
         getdata()
 
-    newsWithYear = []
-    for year in range(2022, 2014, -1):
-        words = wordStatustics(year, str("news/" + str(year) + ".txt"))
-        newsWithYear.append(words)
+    # 统计前十高频词条
+    # newsWithYear = []
+    # for year in range(2022, 2014, -1):
+    #     words = wordStatustics(year, str("news/" + str(year) + ".txt"))
+    #     newsWithYear.append(words)
 
-    drawBarChart(newsWithYear)
+    # 绘制柱状图
+    # drawBarChart(newsWithYear)
+
+    # 生成词云
+    wordCloud()
